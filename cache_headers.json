@@ -1,0 +1,10 @@
+{
+    "patterns":[
+        "max-age=",
+        "HIT",
+        "MISS",
+        "Cached",
+        "public",
+        "s-maxage"
+    ]
+}
