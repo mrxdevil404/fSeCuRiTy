@@ -131,7 +131,7 @@ Sorry for any mistakes.
             f_r.write( report )
         dig_vulns().slowprint (f'{w}[{g}+{w}] Report Was Generated')
 
-    def check_dos( self , name_f ):
+    def check_dos( self , name_f , burp ):
 
         with open(name_f , 'r')as f:
             for url in f.readlines():
@@ -149,7 +149,10 @@ Sorry for any mistakes.
                     else:
                         headers[header] = "A" * 10000          # someone find bug at apple lead to dos with the same way
                     try:
-                        req = requests.get(url , headers = headers , allow_redirects = False, verify=False , proxies=self.proxies)
+                        if burp:
+                            req = requests.get(url , headers = headers , allow_redirects = False, verify=False , proxies=self.proxies)
+                        else:
+                            req = requests.get(url , headers = headers , verify=False)
                         if ( header == "X-Forwarded-Port" and "12211" in req.url and req.status_code in range(403,599) ) or ( header == "X-Forwarded-Host" and "12211" in req.url and req.status_code in range(403,599) ): # james-kettle finding
                             print (f"{w}[{b}+{w}] {url} -> {str(req.status_code)} -> {url} -> {header} -> Web Cache Poisoning DoS")
                             print (f"{w}[{b}+{w}] Reference : https://hackerone.com/reports/409370")
@@ -164,7 +167,7 @@ Sorry for any mistakes.
                     #    print (e)
                     except KeyboardInterrupt:
                         break
-    def case_1_dos( self , name_f ):
+    def case_1_dos( self , name_f , burp ):
 
         headers_attack = [
         "zTRANSFER-ENCODING",
@@ -180,7 +183,10 @@ Sorry for any mistakes.
                     header_attack:"https://blalblablablalblablablabla.com"
                     }
                     try:
-                        req = requests.get(url , headers=headers ,verify=False, proxies=self.proxies)
+                        if burp:
+                            req = requests.get(url , headers = headers , verify=False , proxies=self.proxies)
+                        else:
+                            req = requests.get(url , headers=headers ,verify=False)
                         if req.status_code == 501:
                             print (f"{w}[{g}+{w}] {url} -> Dos Vuln")
                             if header_attack == "zTRANSFER-ENCODING":
@@ -423,8 +429,8 @@ else:
         if "-n" not in sys.argv[1:]:
             exit(f"{w}[{r}!{w}] Number Not Inserted")
         if number == '1':
-            dig_vulns().case_1_dos( name_f )
-            dig_vulns().check_dos( name_f )
+            dig_vulns().case_1_dos( name_f , burp )
+            dig_vulns().check_dos( name_f , burp )
         elif number == '2':
             if isdir(sys.argv[sys.argv.index('-d')+1]):
                 dir_p = sys.argv[sys.argv.index('-d')+1]
@@ -437,19 +443,19 @@ else:
         elif number == '4':
             dig_vulns().test_id( name_f , burp )
         elif number == '5':
-            dig_vulns().ngnix_lfi(name_f , burp , iden())
+            dig_vulns().ngnix_lfi( name_f , burp , iden() )
         elif number == '6':
-            dig_vulns().test_lfi(name_f , burp , iden())
+            dig_vulns().test_lfi( name_f , burp , iden() )
         elif number == '7':
             if "-s" not in sys.argv[1:]:
                 exit(f"{w}[{r}!{w}] Burp collab. Not Provided")
-            dig_vulns().ssrf_test(name_f , burp_collab , burp)
+            dig_vulns().ssrf_test( name_f , burp_collab , burp )
         elif number == 'All':
-            dig_vulns().case_1_dos( name_f )
-            dig_vulns().check_dos( name_f )
-            dig_vulns().ngnix_lfi(name_f , burp , iden())
-            dig_vulns().test_lfi(name_f , burp , iden())
-            dig_vulns().ssrf_test(name_f , burp_collab , burp)
+            dig_vulns().case_1_dos( name_f , burp )
+            dig_vulns().check_dos( name_f , burp )
+            dig_vulns().ngnix_lfi( name_f , burp , iden() )
+            dig_vulns().test_lfi( name_f , burp , iden() )
+            dig_vulns().ssrf_test( name_f , burp_collab , burp )
             dig_vulns().ch_id( name_f )
             dig_vulns().test_id( "results_midor.txt" , burp )
         else :
