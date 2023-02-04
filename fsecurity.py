@@ -379,7 +379,7 @@ if len(sys.argv) == 1:
 {r}-n    {w}: {g}Number of function
 {r}-s    {w}: {g}Server burp collab..
 {r}-burp {w}: {g}pass results to burp
-{r}-p    {w}: {g}path of dir to dig into it
+{r}-d    {w}: {g}path of dir to dig into it
 {r}-F    {w}: {g}Enable Filter mode when digging into file(s)
 
 {r}Functions{w}:
