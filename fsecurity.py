@@ -1,12 +1,11 @@
+from os import system , remove , walk , getcwd
 from platform import system as iden
-from requests import get
+from os.path import isfile , isdir
 from colorama import Fore
 from random import choice
+from time import sleep
 from json import load
 from re import *
-from time import sleep
-from os.path import isfile , isdir
-from os import system , remove , walk , getcwd
 import requests , sys
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
@@ -66,6 +65,20 @@ class dig_vulns:
             sys.stdout.write(c)
             sys.stdout.flush()
             sleep(10. / 600)
+    def check_file(self , name_f ):
+
+        modify_url = []
+        f_cf = open(name_f , 'r')
+        for url in f_cf.readlines():
+            url = url.rstrip()
+            if not url.startswith("https://"):
+                url = "https://" + url
+            modify_url.append(url)
+        if modify_url:
+            with open(name_f , 'w')as f_w:
+                for url in modify_url:
+                    url = url.rstrip()
+                    f_w.write(url + '\n')
 
     def check_cache( self , headers ):
 
@@ -213,7 +226,7 @@ Sorry for any mistakes.
                for line in data :
                   fx.write(line.rstrip() + '\n')
                fx.close()
-    def search_cred_files( self, nameD , filters ): # This Developed only to search for sensetive data at file which come from waybackurls , gau,crawler
+    def search_cred_files( self, nameD , filters ): # This Developed only to search for sensetive data at files in dir which come from waybackurls , gau , crawler or search at downloaded repo from github
 
         result_f = open("cred_results.txt" , 'a')
         result_er = open("errors_result.txt",'a')
@@ -400,7 +413,6 @@ if len(sys.argv) == 1:
 
 {r}Example{w}:
 
-# Not https:// or http:// or www.
 {choice(colors)}""")
     print ("""1. ./{0} -n 1 -f subdomains.txt -burp -> Test All scenario of dos , Web Cache Poisoning Dos
 2. ./{0} -n 2 -d /home/mrx/att -F n   -> Sensetive Data from files in directory
@@ -422,6 +434,7 @@ else:
             name_f = sys.argv[sys.argv.index('-f')+1]
             if not isfile(name_f):
                 exit(f"{w}[{r}!{w}] File Not Found")
+            dig_vulns().check_file( name_f )
         if "-f" not in sys.argv[1:] and "-d" not in sys.argv[1:]:
             exit(f"{w}[{r}!{w}] File Input Not Provided")
         if "-n" in sys.argv[1:]:
