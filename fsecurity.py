@@ -300,7 +300,7 @@ Sorry for any mistakes.
                 for test_ in ff.readlines():
                     test_ = test_.rstrip()
                     try:
-                            req = get(test_ , allow_redirects=False, verify=False, proxies=self.proxies).text
+                            req = requests.get(test_ , allow_redirects=False, verify=False, proxies=self.proxies).text
                             if "root:" in req:
                                 f_rr.write(test_ + '\n')
                                 print (f"{w}[{g}+{w}] {test_} -> LFI Vuln")
@@ -343,9 +343,9 @@ Sorry for any mistakes.
                 for check_ in check_l:
                     if check_.isnumeric():
                         if burp:
-                            req = get(check ,verify=False , proxies=self.proxies)
+                            req = requests.get(check ,verify=False , proxies=self.proxies)
                         else:
-                            req = get(check)
+                            req = requests.get(check)
                         if req.status_code in range(199,404):
                             print(f'{w}[{r}+{w}] {check} -> {str(req.status_code)} status_code')
                             count_old = len(req.text)
@@ -353,9 +353,9 @@ Sorry for any mistakes.
                                 check_2 = int(check_) - nn
                                 new_url = check.replace(check_ , str(check_2) , 1)
                                 if burp:
-                                    req2 = get(new_url , verify=False , proxies=self.proxies)
+                                    req2 = requests.get(new_url , verify=False , proxies=self.proxies)
                                 else:
-                                    req2 = get(new_url)
+                                    req2 = requests.get(new_url)
                                 if req2.status_code in range(199,404):
                                     print(f'{w}[{r}+{w}] {new_url} -> {str(req2.status_code)} status_code')
                                     if (len(req2.text) - count_old) > 5:
